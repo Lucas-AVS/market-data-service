@@ -8,8 +8,6 @@ CREATE TABLE assets (
 CREATE TABLE trading_pairs (
     base_asset_symbol TEXT NOT NULL REFERENCES assets(symbol),
     quote_asset_symbol TEXT NOT NULL REFERENCES assets(symbol),
-    last_known_price DECIMAL(38, 18),
-    price_updated_at TIMESTAMPTZ,
     PRIMARY KEY (base_asset_symbol, quote_asset_symbol),
     CHECK (base_asset_symbol <> quote_asset_symbol)
 );
@@ -21,23 +19,23 @@ INSERT INTO assets(symbol, name, kind, scale) VALUES
     ('BRL', 'Brazilian Real', 'FIAT', 2)
 ON CONFLICT (symbol) DO NOTHING;
 
-INSERT INTO trading_pairs(base_asset_symbol, quote_asset_symbol, last_known_price, price_updated_at) VALUES
+INSERT INTO trading_pairs(base_asset_symbol, quote_asset_symbol) VALUES
     -- BTC <-> USD
-    ('BTC', 'USD', 114223.17, now()),
-    ('USD', 'BTC', 0.0000088, now()),
+    ('BTC', 'USD'),
+    ('USD', 'BTC'),
     -- ETH <-> USD
-    ('ETH', 'USD', 4127.52, now()),
-    ('USD', 'ETH', 0.00024, now()),
+    ('ETH', 'USD'),
+    ('USD', 'ETH'),
     -- BTC <-> BRL
-    ('BRL', 'BTC', 0.0000016, now()),
-    ('BTC', 'BRL', 613705.41, now()),
+    ('BRL', 'BTC'),
+    ('BTC', 'BRL'),
     -- BTC <-> ETH
-    ('BTC', 'ETH', 27.66, now()),
-    ('ETH', 'BTC', 0.036, now()),
+    ('BTC', 'ETH'),
+    ('ETH', 'BTC'),
     -- USD <-> BRL
-    ('USD', 'BRL', 5.37, now()),
-    ('BRL', 'USD', 0.19, now()),
+    ('USD', 'BRL'),
+    ('BRL', 'USD'),
     -- ETH <-> BRL
-    ('ETH', 'BRL', 22164.8324, now()),
-    ('BRL', 'ETH', 0.00004512, now())
+    ('ETH', 'BRL'),
+    ('BRL', 'ETH')
 ON CONFLICT (base_asset_symbol, quote_asset_symbol) DO NOTHING;
