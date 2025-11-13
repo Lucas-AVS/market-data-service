@@ -10,10 +10,14 @@ services:
       - DB_PORT=${DB_PORT_DOCKER}
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
+      - COIN_MARKET_CAP_API_KEY=${COIN_MARKET_CAP_API_KEY}
+      - SPRING_DATA_REDIS_HOST=market-prices-cache
+      - SPRING_DATA_REDIS_PORT=6379
     networks:
       - exchange-net
     depends_on:
       - market-data-db
+      - market-prices-cache
 
   market-data-db:
     image: postgres:15
@@ -30,8 +34,17 @@ services:
       - market-data-db-data:/var/lib/postgresql/data
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
 
+  market-prices-cache:
+    image: redis:8.4-rc1-alpine3.22
+    container_name: market-prices-cache
+    ports:
+      - "6379:6379"
+    networks:
+      - exchange-net
+
 volumes:
   market-data-db-data:
+  market-prices-cache:
 
 networks:
   exchange-net:
