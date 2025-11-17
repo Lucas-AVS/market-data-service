@@ -4,10 +4,13 @@ import com.lucasavs.market_data_service.dto.TradingPairDto;
 import com.lucasavs.market_data_service.entity.TradingPair;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+
 @Component
 public class TradingPairMapper {
 
-    public TradingPairDto toDto(TradingPair entity) {
+    public TradingPairDto toDto(TradingPair entity, BigDecimal price, Instant updatedAt) {
         if (entity == null) {
             return null;
         }
@@ -15,8 +18,8 @@ public class TradingPairMapper {
         return new TradingPairDto(
                 entity.getBaseAsset().getSymbol(),
                 entity.getQuoteAsset().getSymbol(),
-                entity.getLastKnownPrice(),
-                entity.getPriceUpdatedAt()
+                price,
+                updatedAt
         );
     }
 }

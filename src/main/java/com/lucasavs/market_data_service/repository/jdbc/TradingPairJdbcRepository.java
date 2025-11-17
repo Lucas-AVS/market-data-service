@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,9 +21,14 @@ public class TradingPairJdbcRepository implements TradingPairRepository {
     }
 
     private static final String SELECT_TRADING_PAIR_BY_BASE_AND_QUOTE_SQL = """
-        SELECT base_asset_symbol, quote_asset_symbol, last_known_price, price_updated_at
+        SELECT base_asset_symbol, quote_asset_symbol
         FROM trading_pairs
         WHERE base_asset_symbol = ? AND quote_asset_symbol = ?
+    """;
+
+    private static final String SELECT_ALL_TRADING_PAIRS_SQL = """
+        SELECT base_asset_symbol, quote_asset_symbol
+        FROM trading_pairs
     """;
 
     @Override
@@ -31,6 +36,11 @@ public class TradingPairJdbcRepository implements TradingPairRepository {
         return template.query(SELECT_TRADING_PAIR_BY_BASE_AND_QUOTE_SQL,
                 tradingPairRowMapper(), baseAssetSymbol, quoteAssetSymbol)
                 .stream().findFirst();
+    }
+
+    @Override
+    public List<TradingPair> findAll() {
+        return template.query(SELECT_ALL_TRADING_PAIRS_SQL, tradingPairRowMapper());
     }
 
     private RowMapper<TradingPair> tradingPairRowMapper() {
@@ -44,9 +54,6 @@ public class TradingPairJdbcRepository implements TradingPairRepository {
             Asset quoteAsset = new Asset();
             quoteAsset.setSymbol(rs.getObject("quote_asset_symbol", String.class));
             tradingPair.setQuoteAsset(quoteAsset);
-
-            tradingPair.setLastKnownPrice(rs.getBigDecimal("last_known_price"));
-            tradingPair.setPriceUpdatedAt(rs.getObject("price_updated_at", Instant.class));
 
             return tradingPair;
         };

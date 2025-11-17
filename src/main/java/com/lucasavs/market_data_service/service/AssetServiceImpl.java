@@ -2,6 +2,7 @@ package com.lucasavs.market_data_service.service;
 
 import com.lucasavs.market_data_service.dto.AssetDto;
 import com.lucasavs.market_data_service.entity.Asset;
+import com.lucasavs.market_data_service.exception.ResourceNotFoundException;
 import com.lucasavs.market_data_service.mapper.AssetMapper;
 import com.lucasavs.market_data_service.repository.AssetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,8 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public AssetDto findBySymbol(String symbol) {
         Optional<Asset> optionalAsset = assetRepository.findBySymbol(symbol);
-        Asset asset = optionalAsset.orElseThrow(() -> new RuntimeException(symbol + " does not exist in this exchange"));
+
+        Asset asset = optionalAsset.orElseThrow(() -> new ResourceNotFoundException(symbol + " does not exist in this exchange"));
         return assetMapper.toDto(asset);
     }
 }
