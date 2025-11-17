@@ -41,10 +41,12 @@ services:
       - "6379:6379"
     networks:
       - exchange-net
+    volumes:
+      - market-prices-cache-data:/data
 
 volumes:
   market-data-db-data:
-  market-prices-cache:
+  market-prices-cache-data:
 
 networks:
   exchange-net:
